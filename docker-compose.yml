@@ -1,0 +1,9 @@
+version: '3'
+services:
+    anaconda_gpu:
+        build: .
+        volumes:
+            - ./:/workspace
+            - "/home/myaun/Dropbox/data/keyakizaka_mining:/keyakizaka_mining"
+        ports:
+            - "8888:8888"
