@@ -1,38 +1,11 @@
-FROM tensorflow/tensorflow:devel-gpu
+FROM nvidia/cuda:9.0-cudnn7-runtime
 
-# anaconda 20190217ver https://hub.docker.com/r/continuumio/anaconda3/dockerfile
-
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV PATH /opt/conda/bin:$PATH
-
-RUN apt-get update --fix-missing && apt-get install -y wget bzip2 ca-certificates \
-    libglib2.0-0 libxext6 libsm6 libxrender1 \
-    git mercurial subversion
-
-RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh -O ~/anaconda.sh && \
-    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
-    rm ~/anaconda.sh && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
-
-RUN apt-get install -y curl grep sed dpkg && \
-    TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
-    curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \
-    dpkg -i tini.deb && \
-    rm tini.deb && \
-    apt-get clean
-
-ENTRYPOINT [ "/usr/bin/tini", "--" ]
-CMD [ "/bin/bash" ]
-
-# additional python library
-
-RUN pip install keras
-RUN pip install --upgrade tensorflow-gpu
-RUN pip install annoy
+RUN apt update && apt install -y python3-pip
+RUN pip3 install --upgrade pip
+RUN pip3 install -U tensorflow-gpu==1.8.0 
+RUN pip3 install scipy pandas seaborn pillow matplotlib cloudpickle scipy sklearn annoy keras
+RUN pip3 install jupyterlab
 
 WORKDIR /workspace
 
-CMD jupyter-lab --no-browser \
-  --port=8888 --ip=0.0.0.0 --allow-root
+CMD jupyter-lab --no-browser --port=8899 --ip=0.0.0.0 --allow-root

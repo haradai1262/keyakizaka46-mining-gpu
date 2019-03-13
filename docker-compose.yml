@@ -1,9 +1,10 @@
-version: '3'
+version: '2.3'
 services:
     anaconda_gpu:
         build: .
         volumes:
             - ./:/workspace
-            - "/home/myaun/Dropbox/data/keyakizaka_mining:/keyakizaka_mining"
+            - "/home/daichi/Dropbox/data/keyakizaka_mining:/keyakizaka_mining"
+        runtime: nvidia
         ports:
-            - "8888:8888"
+            - "8899:8899"
